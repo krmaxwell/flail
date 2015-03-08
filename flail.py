@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Flail is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
@@ -14,28 +12,34 @@
 # along with Flail.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import click
 import json
 import pprint
 import re
 from netaddr import IPAddress, IPNetwork, IPSet
 
 
-def main():
-    argparse = argparse.ArgumentParser()
-    argparse.add_argument('-n', '--networks', help='target network in CIDR format (comma-separated if >1)')
-    argparse.add_argument('-i', '--input', help='file containing target networks in CIDR format, one per line')
-    argparse.add_argument('-d', '--domain', help="substring to search in domains")
-    argparse.add_argument('-c', '--crop', help="path to crop.json")
-    args = argparse.parse_args()
+@click.command()
+@click.option('--networks', '-n', help='target network in CIDR format (comma-separated if >1)')
+@click.option('--domain', '-d', help='target substring to search in domains')
+@click.option('--asn', '-a', help='target autonomous system number')
+@click.option('--input', '-i', help='file containing targets, one per line')
+@click.argument('crop', help='path to crop.json',
+                type=click.Path(exists=True, dir_okay=False),
+                default='crop.json')
+def cli(networks, input, domain, crop):
+    '''Search blacklists for networks and domains'''
+    data = load_data(crop)
 
-    if args.crop:
-        cropfile = args.crop
-    else:
-        cropfile = 'crop.json'
 
+
+def load_data(cropfile):
     with open(cropfile, 'rb') as f:
         harvest = json.load(f)
+    return harvest
 
+
+def main():
     if args.networks:
         nets = args.networks.split(',')
     elif args.input:
