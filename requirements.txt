@@ -1,5 +1,3 @@
-argparse (1.2.1)
-netaddr (0.7.12)
-pip (1.5.4)
-setuptools (2.2)
-wsgiref (0.1.2)
+argparse==1.2.1
+netaddr==0.7.13
+wsgiref==0.1.2
