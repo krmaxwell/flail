@@ -19,46 +19,52 @@ import pprint
 import re
 from netaddr import IPAddress, IPNetwork, IPSet
 
-argparse = argparse.ArgumentParser()
-argparse.add_argument('-n', '--networks', help='target network in CIDR format (comma-separated if >1)')
-argparse.add_argument('-i', '--input', help='file containing target networks in CIDR format, one per line')
-argparse.add_argument('-d', '--domain', help="substring to search in domains")
-argparse.add_argument('-c', '--crop', help="path to crop.json")
-args = argparse.parse_args()
 
-if args.crop:
-    cropfile = args.crop
-else:
-    cropfile = 'crop.json'
+def main():
+    argparse = argparse.ArgumentParser()
+    argparse.add_argument('-n', '--networks', help='target network in CIDR format (comma-separated if >1)')
+    argparse.add_argument('-i', '--input', help='file containing target networks in CIDR format, one per line')
+    argparse.add_argument('-d', '--domain', help="substring to search in domains")
+    argparse.add_argument('-c', '--crop', help="path to crop.json")
+    args = argparse.parse_args()
 
-with open(cropfile, 'rb') as f:
-    harvest = json.load(f)
+    if args.crop:
+        cropfile = args.crop
+    else:
+        cropfile = 'crop.json'
 
-if args.networks:
-    nets = args.networks.split(',')
-elif args.input:
-    with open(args.input, 'rb') as f:
-        nets = list(f)
-else:
-    nets = None
+    with open(cropfile, 'rb') as f:
+        harvest = json.load(f)
 
-if nets:
-    ournet = IPSet(IPNetwork(n) for n in nets)
-else:
-    ournet = None
+    if args.networks:
+        nets = args.networks.split(',')
+    elif args.input:
+        with open(args.input, 'rb') as f:
+            nets = list(f)
+    else:
+        nets = None
 
-if args.domain:
-    ourdomain = args.domain
-else:
-    ourdomain = None
+    if nets:
+        ournet = IPSet(IPNetwork(n) for n in nets)
+    else:
+        ournet = None
 
-hosts = []
-pp = pprint.PrettyPrinter(indent=2)
+    if args.domain:
+        ourdomain = args.domain
+    else:
+        ourdomain = None
 
-for address in harvest:
-    if ournet and re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', address[0]) and IPAddress(address[0]) in ournet:
-        hosts.append(address)
-    elif ourdomain and re.match(ourdomain, address[0], flags=re.IGNORECASE):
-        hosts.append(address)
+    hosts = []
+    pp = pprint.PrettyPrinter(indent=2)
 
-pp.pprint(hosts)
+    for address in harvest:
+        if ournet and re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', address[0]) and IPAddress(address[0]) in ournet:
+            hosts.append(address)
+        elif ourdomain and re.match(ourdomain, address[0], flags=re.IGNORECASE):
+            hosts.append(address)
+
+    pp.pprint(hosts)
+
+
+if __name__ == "__main__":
+    main()
