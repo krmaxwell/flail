@@ -6,7 +6,6 @@ setup(
     py_modules=['flail'],
     install_requires=[
         'Click',
-        'netaddr',
     ],
     entry_points='''
         [console_scripts]

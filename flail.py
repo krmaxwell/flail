@@ -11,20 +11,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Flail.  If not, see <http://www.gnu.org/licenses/>.
 
-import argparse
 import click
 import json
-import pprint
-import re
-from netaddr import IPAddress, IPNetwork, IPSet
 
 
 @click.command()
-@click.option('--targets', '-t', help='targets (comma-separated if >1)')
-@click.option('--inputfile', '-i', help='file containing targets, one per line')
-@click.argument('crop', help='path to crop.json',
-                type=click.Path(exists=True, dir_okay=False),
-                default='crop.json')
+@click.option('--targets', help='comma-separated list of targets')
+@click.option('--inputfile', help='file containing targets, one per line')
+@click.argument('crop', default='crop.json')
 def cli(targets, inputfile, crop):
     '''Search blacklists for networks, autonomous systems, and domains'''
     crop = load_crop(crop)
