@@ -31,6 +31,7 @@ def cli(targets, inputfile, crop):
 
 
 def load_crop(cropfile):
+    """ Loads a crop.json file from Combine """
     with open(cropfile, 'rb') as f:
         crop = json.load(f)
     return crop
