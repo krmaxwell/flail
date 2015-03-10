@@ -25,7 +25,7 @@ from netaddr import IPAddress, IPNetwork, IPSet
 @click.argument('crop', help='path to crop.json',
                 type=click.Path(exists=True, dir_okay=False),
                 default='crop.json')
-def cli(targets, inputfile):
+def cli(targets, inputfile, crop):
     '''Search blacklists for networks, autonomous systems, and domains'''
     crop = load_crop(crop)
     terms = []
@@ -40,25 +40,3 @@ def load_crop(cropfile):
     with open(cropfile, 'rb') as f:
         crop = json.load(f)
     return crop
-
-
-def main():
-    if nets:
-        ournet = IPSet(IPNetwork(n) for n in nets)
-    else:
-        ournet = None
-
-    hosts = []
-    pp = pprint.PrettyPrinter(indent=2)
-
-    for address in harvest:
-        if ournet and re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', address[0]) and IPAddress(address[0]) in ournet:
-            hosts.append(address)
-        elif ourdomain and re.match(ourdomain, address[0], flags=re.IGNORECASE):
-            hosts.append(address)
-
-    pp.pprint(hosts)
-
-
-if __name__ == "__main__":
-    main()
