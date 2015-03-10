@@ -20,43 +20,33 @@ from netaddr import IPAddress, IPNetwork, IPSet
 
 
 @click.command()
-@click.option('--networks', '-n', help='target network in CIDR format (comma-separated if >1)')
-@click.option('--domain', '-d', help='target substring to search in domains')
-@click.option('--asn', '-a', help='target autonomous system number')
-@click.option('--input', '-i', help='file containing targets, one per line')
+@click.option('--targets', '-t', help='targets (comma-separated if >1)')
+@click.option('--inputfile', '-i', help='file containing targets, one per line')
 @click.argument('crop', help='path to crop.json',
                 type=click.Path(exists=True, dir_okay=False),
                 default='crop.json')
-def cli(networks, input, domain, crop):
-    '''Search blacklists for networks and domains'''
-    data = load_data(crop)
+def cli(targets, inputfile):
+    '''Search blacklists for networks, autonomous systems, and domains'''
+    crop = load_crop(crop)
+    terms = []
+    if inputfile:
+        with click.open_file(inputfile, 'r') as f:
+            terms = list(f)
+    if targets:
+        terms.append(targets.split(','))
 
 
-
-def load_data(cropfile):
+def load_crop(cropfile):
     with open(cropfile, 'rb') as f:
-        harvest = json.load(f)
-    return harvest
+        crop = json.load(f)
+    return crop
 
 
 def main():
-    if args.networks:
-        nets = args.networks.split(',')
-    elif args.input:
-        with open(args.input, 'rb') as f:
-            nets = list(f)
-    else:
-        nets = None
-
     if nets:
         ournet = IPSet(IPNetwork(n) for n in nets)
     else:
         ournet = None
-
-    if args.domain:
-        ourdomain = args.domain
-    else:
-        ourdomain = None
 
     hosts = []
     pp = pprint.PrettyPrinter(indent=2)
