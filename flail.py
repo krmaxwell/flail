@@ -13,6 +13,7 @@
 
 import click
 import json
+import netaddr
 
 
 @click.command()
@@ -28,6 +29,7 @@ def cli(targets, inputfile, crop):
             terms = list(f)
     if targets:
         terms.append(targets.split(','))
+    searches['nets'] = search_nets(terms)
 
 
 def load_crop(cropfile):
@@ -35,3 +37,15 @@ def load_crop(cropfile):
     with open(cropfile, 'rb') as f:
         crop = json.load(f)
     return crop
+
+
+def search_nets(terms):
+    ''' Search a list of strings for IP addresses and networks '''
+    results = []
+    for term in terms:
+        try:
+            net = netaddr.IPNetwork(term)
+            results.append(term)
+        except netaddr.core.AddrFormatError:
+            pass
+    return results

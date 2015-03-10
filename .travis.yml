@@ -2,5 +2,4 @@ language: python
 python:
   - "2.7"
 install: "python setup.py install"
-# right now, just making sure the damn thing doesn't immediately blow up
 script: "nosetests"
