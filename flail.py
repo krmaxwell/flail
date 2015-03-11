@@ -14,6 +14,7 @@
 import click
 import json
 import netaddr
+import re
 
 
 @click.command()
@@ -52,7 +53,15 @@ def search_nets(terms):
     return netaddr.IPSet(results)
 
 
+def search_asns(terms):
+    '''Search a list of strings for autonomous system numbers '''
+    as_regex = re.compile('AS\d{1,10}', re.I)
+    results = [term for term in terms if as_regex.match(term)]
+    return results
+
+'''
 def flail_crop(crop, searches):
     results = []
     results.append([each for each in crop if each[0] in searches['nets']])
     return results
+'''
