@@ -30,6 +30,7 @@ def cli(targets, inputfile, crop):
     if targets:
         terms.append(targets.split(','))
     searches['nets'] = search_nets(terms)
+    print flail_crop(crop, searches)
 
 
 def load_crop(cropfile):
@@ -45,7 +46,13 @@ def search_nets(terms):
     for term in terms:
         try:
             net = netaddr.IPNetwork(term)
-            results.append(term)
+            results.append(net)
         except netaddr.core.AddrFormatError:
             pass
+    return netaddr.IPSet(results)
+
+
+def flail_crop(crop, searches):
+    results = []
+    results.append([each for each in crop if each[0] in searches['nets']])
     return results

@@ -1,10 +1,10 @@
 [
   [
-    "178.72.145.250",
+    "192.0.2.1",
     "IPv4",
     "inbound",
-    "http://www.projecthoneypot.org/list_of_ips.php?rss=1",
+    "http://example.org/bad_ips",
     "",
-    "2015-03-08"
+    "1970-01-01"
   ]
 ]
